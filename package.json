@@ -1,0 +1,26 @@
+{
+  "name": "naiad",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "yarn tsc",
+    "test": "ava src/**/*.spec.js"
+  },
+  "keywords": [],
+  "author": "Kevin Tjiam <kevin@kevincharm.com>",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@types/node": "^10.12.18",
+    "@types/pino": "^5.8.3",
+    "@types/uuid": "^3.4.4",
+    "ava": "^1.0.1",
+    "pino-pretty": "^2.5.0",
+    "typescript": "^3.2.2"
+  },
+  "dependencies": {
+    "node": "10",
+    "pino": "^5.10.6",
+    "uuid": "^3.3.2"
+  }
+}

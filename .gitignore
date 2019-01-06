@@ -1,0 +1,6 @@
+.DS_Store
+src/**/*.js
+src/**/*.js.map
+
+# node dependencies
+node_modules/
