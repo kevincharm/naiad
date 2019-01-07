@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "yarn tsc",
+    "start": "node src/index.js",
     "test": "ava src/**/*.spec.js"
   },
   "keywords": [],
@@ -19,6 +20,7 @@
     "typescript": "^3.2.2"
   },
   "dependencies": {
+    "discord.js": "^11.4.2",
     "node": "10",
     "pino": "^5.10.6",
     "uuid": "^3.3.2"

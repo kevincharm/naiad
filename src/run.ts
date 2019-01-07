@@ -8,13 +8,15 @@ import log from './lib/logger'
 const mkdir = promisify(fs.mkdir)
 const writeFile = promisify(fs.writeFile)
 
+const HARD_TIMEOUT = 10000
+
 export interface ExecResult {
     stdout: string
     stderr: string
 }
 
 export default async function run(source: string): Promise<ExecResult> {
-    await pull()
+    // await pull()
     const result = await exec(source)
     return result
 }
@@ -31,6 +33,13 @@ async function exec(source: string): Promise<ExecResult> {
     const dockerOpts = ['run', '--rm', '-v', `${tempDir}:/app`, 'node:lts-alpine', 'node', `/app/${sourceFilename}`]
     log.info(`Launching docker with args: ${JSON.stringify(dockerOpts)}`)
     const docker = summon('docker', dockerOpts)
+
+    // Hard timeout
+    let dockerDidTimeout = false
+    const dockerTimeout = setTimeout(() => {
+        dockerDidTimeout = true
+        docker.kill('SIGKILL')
+    }, HARD_TIMEOUT)
 
     const stdoutPromise = new Promise<string>((resolve, reject) => {
         let stdout = ''
@@ -59,8 +68,14 @@ async function exec(source: string): Promise<ExecResult> {
     const exitPromise = new Promise<void>((resolve, reject) => {
         docker.on('error', reject)
         docker.on('close', (code, signal) => {
+            clearTimeout(dockerTimeout)
+            if (dockerDidTimeout) {
+                reject(new Error(`Program took too long to finish, aborted!`))
+                return
+            }
+
             if (code !== 0) {
-                reject(new Error(`Docker pull failed with code ${code}, signal ${signal}`))
+                reject(new Error(`Docker run failed with code ${code}, signal ${signal}`))
                 return
             }
             resolve()
@@ -82,7 +97,7 @@ async function createTempDir() {
     return tempDir
 }
 
-function pull() {
+export function pull() {
     return new Promise((resolve, reject) => {
         const dockerImage = 'node:lts-alpine'
         log.info(`Pulling docker image: ${dockerImage}`)
