@@ -23,7 +23,7 @@ async function main() {
         }
 
         const content = msg.content
-        const extracted = content.match(/```(?:js)?([\s\S]+)```/)
+        const extracted = content.match(/```(?:js|javascript)?\n([\s\S]+)\n```/)
         if (!!extracted) {
             const [, source] = extracted
             log.info(`Running code: ${source}`)
