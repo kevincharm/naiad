@@ -11,6 +11,11 @@ async function main() {
         log.info(`Logged in as ${client.user.tag}`)
     })
 
+    client.on('error', err => {
+        log.error(err)
+        process.exit(1)
+    })
+
     client.on('message', async msg => {
         const TRIGGER = '!run'
         if (!msg.content.startsWith(TRIGGER) && !msg.content.endsWith(TRIGGER)) {
